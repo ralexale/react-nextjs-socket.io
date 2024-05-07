@@ -1,50 +1,11 @@
-import { useState } from "react";
 import { BandAdd } from "./components/BandAdd";
 import { BandList } from "./components/BandList";
-import { io } from "socket.io-client";
-import { useEffect } from "react";
 
-const connectSocketServer = () => {
-    // const socket = io.connect("http://localhost:8080", {
-    //     transports: ["websocket"],
-    // });
-
-    const socket = io("http://localhost:8080");
-    return socket;
-};
+import { useSocket } from "./hooks/useSocket";
 
 function App() {
-    const [socket] = useState(connectSocketServer());
-    const [online, setOnline] = useState(false);
-    const [bandsList, setBands] = useState([]);
+    const { online } = useSocket();
 
-    useEffect(() => {
-        setOnline(socket.connected);
-    }, [socket]);
-
-    useEffect(() => {
-        socket.on("connect", () => {
-            setOnline(true);
-        });
-    }, [socket]);
-
-    useEffect(() => {
-        socket.on("disconnect", () => {
-            setOnline(false);
-        });
-
-        // return socket.disconnect()
-    }, [socket]);
-
-    useEffect(() => {
-        socket.on("current-bands", (bands) => {
-            setBands(bands);
-        });
-
-        console.log(bandsList);
-
-        // return socket.disconnect()
-    }, [socket, bandsList]);
     return (
         <main className="min-h-svh p-5 flex flex-col gap-5 bg-gray-500 w-svw">
             <div className="container">
@@ -63,7 +24,7 @@ function App() {
 
             <section className="container flex gap-16">
                 <div className="w-1/2">
-                    <BandList data={bandsList} />
+                    <BandList />
                 </div>
 
                 <div className="w-1/2">
